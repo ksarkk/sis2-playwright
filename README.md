@@ -23,9 +23,18 @@ Each shard uploads JUnit XML and available failure evidence as test-results-N. A
 
 ### Runtime
 
-| Configuration | Total workflow time | Test step (slowest shard) | Actions run |
-| --- | --- | --- | --- |
-| One shard, including merge | Pending | Pending | Pending |
-| Four shards, including merge | Pending | Pending | Pending |
+Median of three successful hosted runs per configuration. Total time is measured from run creation to completion, including runner queue time, setup and report merging. For each run the test-step measurement uses its slowest shard.
 
-For a comparable baseline, set both matrix entries to [1] on a benchmark branch. Run that version and the four-shard version three times each with the same tests and warmed npm cache. Record median workflow duration and median slowest test-step duration and link the runs. Compare elapsed time including setup and merging. Measurements require hosted runs.
+| Configuration | Total workflow time | Test step | GitHub Actions runs |
+| --- | ---: | ---: | --- |
+| One shard | 113 s | 3 s | [Run 1](https://github.com/ksarkk/sis2-playwright/actions/runs/45057276585), [Run 2](https://github.com/ksarkk/sis2-playwright/actions/runs/45057280093), [Run 3](https://github.com/ksarkk/sis2-playwright/actions/runs/45057515399) |
+| Four shards | 175 s | 3 s | [Run 1](https://github.com/ksarkk/sis2-playwright/actions/runs/45057349153), [Run 2](https://github.com/ksarkk/sis2-playwright/actions/runs/45057500910), [Run 3](https://github.com/ksarkk/sis2-playwright/actions/runs/45057506374) |
+
+With eight short tests the test command takes only a few seconds. Runner queueing, container startup and report merging account for most of the elapsed time.
+
+### Verification
+
+- [Push run](https://github.com/ksarkk/sis2-playwright/actions/runs/45057500910) and [pull request run](https://github.com/ksarkk/sis2-playwright/actions/runs/45057506374) exercise the four-shard workflow.
+- [Cache restoration log](https://github.com/ksarkk/sis2-playwright/actions/runs/45057500910/job/137315875666) records a cache hit in setup-node.
+- [Retry evidence](https://github.com/ksarkk/sis2-playwright/actions/runs/45057400309) uses a separate diagnostic branch. Download test-results-4 and open the nested trace.zip with Playwright Trace Viewer.
+- [Focused-test rejection](https://github.com/ksarkk/sis2-playwright/actions/runs/45057455003) deliberately introduces test.only on a separate branch and demonstrates the CI failure.
