@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Task list</title>
+<main><h1>Task list</h1><form><label>Task <input name="task" required></label> <button>Add</button></form>
+<p role="status"></p><ul aria-label="Tasks"></ul></main>
+<script type="module">
+const form = document.querySelector('form');
+const input = form.elements.task;
+const list = document.querySelector('ul');
+const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+function render() {
+  list.replaceChildren();
+  for (const task of tasks) {
+    const row = document.createElement('li');
+    const label = document.createElement('label');
+    const check = document.createElement('input');
+    check.type = 'checkbox';
+    check.checked = task.done;
+    check.onchange = () => { task.done = check.checked; render(); };
+    label.append(check, task.name);
+    const remove = document.createElement('button');
+    remove.textContent = 'Delete';
+    remove.onclick = () => { tasks.splice(tasks.indexOf(task), 1); render(); };
+    row.append(label, remove);
+    list.append(row);
+  }
+  document.querySelector('[role=status]').textContent = 'Remaining: ' + tasks.filter(t => !t.done).length;
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+form.onsubmit = event => {
+  event.preventDefault();
+  if (!input.value.trim()) return;
+  tasks.push({name: input.value.trim(), done: false});
+  input.value = '';
+  render();
+};
+render();
+</script></html>
