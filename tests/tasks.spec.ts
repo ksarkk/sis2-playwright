@@ -52,3 +52,9 @@ test('restores completion after reload', async ({ page }) => {
   await expect(page.getByRole('checkbox', { name: 'Read' })).toBeChecked();
   await expect(page.getByRole('status')).toHaveText('Remaining: 0');
 });
+
+// Diagnostic branch only: exercise CI trace collection on a successful retry.
+test('captures a trace on retry', async ({ page }, testInfo) => {
+  await page.getByRole('textbox').fill('Verify trace');
+  expect(testInfo.retry).toBeGreaterThan(0);
+});
