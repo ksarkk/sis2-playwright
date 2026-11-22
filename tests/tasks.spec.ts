@@ -6,7 +6,7 @@ async function add(page: Page, name: string) {
 }
 test.beforeEach(async ({ page }) => { await page.goto('/'); });
 
-test('starts empty', async ({ page }) => {
+test.only('starts empty', async ({ page }) => {
   await expect(page.getByRole('status')).toHaveText('Remaining: 0');
   await expect(page.getByRole('listitem')).toHaveCount(0);
 });
